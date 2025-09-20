@@ -4,7 +4,7 @@ import "./globals.css";
 import Providers from "@/context/providers";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
