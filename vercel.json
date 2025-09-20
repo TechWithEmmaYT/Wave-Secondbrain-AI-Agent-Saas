@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci && npm install --no-save --platform=linuxmusl --arch=x64 lightningcss && npm install --no-save @tailwindcss/postcss@next tailwindcss@next",
+  "framework": "nextjs"
+}
