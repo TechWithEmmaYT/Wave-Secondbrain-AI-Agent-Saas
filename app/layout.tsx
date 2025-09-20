@@ -3,9 +3,9 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Providers from "@/context/providers";
 
-const geistSans = Geist({
-  variable: "--font-sans",
+const geist = Geist({
   subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} antialiased`}>
+      <body
+        className={`${geist.variable} ${geist.className} font-sans antialiased`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
