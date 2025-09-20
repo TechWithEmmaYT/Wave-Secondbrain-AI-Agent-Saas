@@ -90,6 +90,7 @@ const ChatInterface = (props: Props) => {
           disabled={inputDisabled}
           messages={messages}
           status={status}
+          hasReachedLimit={hasReachedLimit}
           stop={stop}
           initialModelId={DEFAULT_MODEL_ID}
           sendMessage={sendMessage}
@@ -119,6 +120,7 @@ const ChatInterface = (props: Props) => {
             className="w-full"
             messages={messages}
             status={status}
+            hasReachedLimit={hasReachedLimit}
             stop={stop}
             initialModelId={DEFAULT_MODEL_ID}
             sendMessage={sendMessage}

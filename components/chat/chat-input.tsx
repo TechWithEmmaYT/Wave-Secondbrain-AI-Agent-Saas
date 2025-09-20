@@ -36,6 +36,8 @@ type Props = {
   chatId: string;
   input: string;
   className?: string;
+  hasReachedLimit?: boolean;
+
   setInput: Dispatch<SetStateAction<string>>;
   status: ChatStatus;
   messages: Array<UIMessage>;
@@ -54,6 +56,7 @@ const ChatInput: FC<Props> = ({
   setInput,
   sendMessage,
   disabled,
+  hasReachedLimit,
   stop,
 }) => {
   const { localModelId, setLocalModelId } = useLocalChat();
@@ -89,6 +92,12 @@ const ChatInput: FC<Props> = ({
   };
 
   const onSubmit = useCallback(() => {
+    if (hasReachedLimit) {
+      toast.error(
+        "You’ve reached your message limit. Please upgrade to continue."
+      );
+      return;
+    }
     if (disabled) return;
     if (!input.trim()) {
       toast.error("Please type in a message");
@@ -135,6 +144,7 @@ const ChatInput: FC<Props> = ({
     disabled,
     selectedTool,
     selectedModelId,
+    hasReachedLimit,
     setInput,
     sendMessage,
     setIsChatView,
