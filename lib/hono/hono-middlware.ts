@@ -1,3 +1,4 @@
+"server-only";
 import { createMiddleware } from "hono/factory";
 import { auth } from "../auth";
 import { HTTPException } from "hono/http-exception";

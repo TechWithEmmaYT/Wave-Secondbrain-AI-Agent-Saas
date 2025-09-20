@@ -1,3 +1,4 @@
+"use server";
 import { myProvider } from "@/lib/ai/providers";
 import { PLAN_ENUM, PLANS } from "@/lib/constant";
 import prisma from "@/lib/prisma";
