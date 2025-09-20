@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  stripeCustomerId     String?   // Optional
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  notes         Note[]
+  Chat          Chat[]
+  subscriptions     Subscription[]
+
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Note {
+  id       String  @id @default(uuid())
+  title    String
+  content  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notes")
+}
+
+model Chat {
+  id       String @id @default(uuid())
+  title    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages   Message[]
+  @@map("chats")
+
+}
+
+
+enum Role {
+  user
+  assistant
+  system
+}
+
+model Message {
+  id       String @id @default(uuid())
+  role      Role
+  parts      Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@map("messages")
+}
+
+enum Plan {
+  free
+  plus
+  premium
+}
+
+model Subscription {
+  id                   String    @id @default(uuid())
+  plan                 Plan  @default(free)
+  referenceId          String    // Usually corresponds to User.id (or org ID)
+  stripeCustomerId     String?   // Optional
+  stripeSubscriptionId String?   // Optional
+  status               String
+  periodStart      DateTime?
+  periodEnd        DateTime?
+  cancelAtPeriodEnd    Boolean?  @default(false)
+  seats                Int?
+  trialStart       DateTime?
+  trialEnd         DateTime?
+
+  user                 User   @relation(fields: [referenceId], references: [id], onDelete: Cascade)
+  @@map("subscriptions")
+}
+
+

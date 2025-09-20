@@ -1,0 +1,446 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 15",
+    "React 19",
+    "Hono",
+    "Prisma",
+    "PostgreSQL",
+    "Better Auth",
+    "Stripe",
+    "AI SDK",
+    "Tailwind CSS",
+    "Zod"
+  ],
+  "features": [
+    {
+      "name": "Base API",
+      "description": "Base API endpoint that returns a welcome message",
+      "files": ["app/api/[[...route]]/route.ts"],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Wave AI Agent - Base API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/": {
+            "get": {
+              "summary": "Get welcome message",
+              "security": [{ "Bearer": [] }],
+              "responses": {
+                "200": {
+                  "description": "Success",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "message": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Note Management API",
+      "description": "CRUD operations for user notes including create, read, update, delete with pagination",
+      "files": ["app/api/[[...route]]/note.ts"],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Wave AI Agent - Note API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/note/create": {
+            "post": {
+              "summary": "Create a new note",
+              "security": [{ "Bearer": [] }],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "title": { "type": "string", "minLength": 1 },
+                        "content": { "type": "string" }
+                      },
+                      "required": ["title", "content"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Note created successfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "id": { "type": "string" },
+                              "title": { "type": "string" },
+                              "content": { "type": "string" },
+                              "userId": { "type": "string" },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/note/update/{id}": {
+            "patch": {
+              "summary": "Update an existing note",
+              "security": [{ "Bearer": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": { "type": "string" }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "title": { "type": "string" },
+                        "content": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Note updated successfully"
+                },
+                "404": {
+                  "description": "Note not found"
+                }
+              }
+            }
+          },
+          "/api/note/delete/{id}": {
+            "delete": {
+              "summary": "Delete a note",
+              "security": [{ "Bearer": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": { "type": "string" }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Note deleted successfully"
+                },
+                "404": {
+                  "description": "Note not found"
+                }
+              }
+            }
+          },
+          "/api/note/all": {
+            "get": {
+              "summary": "Get all user notes with pagination",
+              "security": [{ "Bearer": [] }],
+              "parameters": [
+                {
+                  "name": "page",
+                  "in": "query",
+                  "schema": { "type": "integer", "default": 1 }
+                },
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "schema": { "type": "integer", "default": 20 }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Notes retrieved successfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "title": { "type": "string" },
+                                "content": { "type": "string" },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
+                              }
+                            }
+                          },
+                          "pagination": {
+                            "type": "object",
+                            "properties": {
+                              "total": { "type": "integer" },
+                              "page": { "type": "integer" },
+                              "limit": { "type": "integer" },
+                              "totalPages": { "type": "integer" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/note/{id}": {
+            "get": {
+              "summary": "Get a specific note",
+              "security": [{ "Bearer": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": { "type": "string" }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Note retrieved successfully"
+                },
+                "404": {
+                  "description": "Note not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Chat API",
+      "description": "AI chat functionality with streaming responses, message history, and tool integration",
+      "files": ["app/api/[[...route]]/chat.ts"],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Wave AI Agent - Chat API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/chat": {
+            "post": {
+              "summary": "Start or continue a chat conversation",
+              "security": [{ "Bearer": [] }],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "minLength": 1 },
+                        "message": {
+                          "type": "object",
+                          "description": "UIMessage object with user input"
+                        },
+                        "selectedModelId": { "type": "string" },
+                        "selectedToolName": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": ["id", "message", "selectedModelId"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Streaming chat response"
+                },
+                "403": {
+                  "description": "Generation limit reached"
+                }
+              }
+            },
+            "get": {
+              "summary": "Get all user chats",
+              "security": [{ "Bearer": [] }],
+              "responses": {
+                "200": {
+                  "description": "Chats retrieved successfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "data": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "title": { "type": "string" },
+                                "userId": { "type": "string" },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/chat/{id}": {
+            "get": {
+              "summary": "Get a specific chat with messages",
+              "security": [{ "Bearer": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": { "type": "string" }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Chat retrieved successfully with messages"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Subscription API",
+      "description": "Subscription management including upgrade functionality and generation limits",
+      "files": ["app/api/[[...route]]/subscription.ts"],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Wave AI Agent - Subscription API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/subscription/upgrade": {
+            "post": {
+              "summary": "Upgrade user subscription plan",
+              "security": [{ "Bearer": [] }],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "plan": {
+                          "type": "string",
+                          "enum": ["plus", "premium"]
+                        },
+                        "callbackUrl": { "type": "string", "minLength": 1 }
+                      },
+                      "required": ["plan", "callbackUrl"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Checkout session created",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "checkoutUrl": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Already on the requested plan"
+                }
+              }
+            }
+          },
+          "/api/subscription/generations": {
+            "get": {
+              "summary": "Get user generation limits and usage",
+              "security": [{ "Bearer": [] }],
+              "responses": {
+                "200": {
+                  "description": "Generation data retrieved successfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "isAllowed": { "type": "boolean" },
+                              "current": { "type": "integer" },
+                              "limit": { "type": "integer" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

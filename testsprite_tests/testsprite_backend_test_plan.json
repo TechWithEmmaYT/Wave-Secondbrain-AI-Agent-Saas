@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "get_welcome_message",
+    "description": "Test the base API endpoint /api/ to verify it returns a welcome message with status 200 and requires Bearer token authentication."
+  },
+  {
+    "id": "TC002",
+    "title": "create_new_note",
+    "description": "Test the POST /api/note/create endpoint to create a new note with valid title and content, ensuring the note is saved with correct user association and timestamps."
+  },
+  {
+    "id": "TC003",
+    "title": "update_existing_note",
+    "description": "Test the PATCH /api/note/update/{id} endpoint to update an existing note's title and/or content, verifying success response and handling of non-existent note with 404."
+  },
+  {
+    "id": "TC004",
+    "title": "delete_note",
+    "description": "Test the DELETE /api/note/delete/{id} endpoint to delete a note by id, verifying successful deletion and 404 response if note does not exist."
+  },
+  {
+    "id": "TC005",
+    "title": "get_all_user_notes_with_pagination",
+    "description": "Test the GET /api/note/all endpoint to retrieve all notes for a user with pagination parameters page and limit, verifying correct pagination metadata and note data."
+  },
+  {
+    "id": "TC006",
+    "title": "get_specific_note_by_id",
+    "description": "Test the GET /api/note/{id} endpoint to fetch a specific note by id, verifying successful retrieval and 404 response if note is not found."
+  },
+  {
+    "id": "TC007",
+    "title": "start_or_continue_chat_conversation",
+    "description": "Test the POST /api/chat endpoint to start or continue a chat conversation with required fields id, message, and selectedModelId, verifying streaming AI response and handling generation limit reached with 403."
+  },
+  {
+    "id": "TC008",
+    "title": "get_all_user_chats",
+    "description": "Test the GET /api/chat endpoint to retrieve all chat conversations for the authenticated user, verifying the response contains chat list with correct user association."
+  },
+  {
+    "id": "TC009",
+    "title": "get_specific_chat_with_messages",
+    "description": "Test the GET /api/chat/{id} endpoint to fetch a specific chat conversation along with its messages, verifying successful retrieval and correct data structure."
+  },
+  {
+    "id": "TC010",
+    "title": "upgrade_user_subscription_plan",
+    "description": "Test the POST /api/subscription/upgrade endpoint to upgrade the user's subscription plan to plus or premium, verifying checkout URL generation and handling already on requested plan with 400."
+  }
+]

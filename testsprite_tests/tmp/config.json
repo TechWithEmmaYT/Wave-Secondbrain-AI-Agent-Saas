@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "backendAuthType": "Bearer token",
+  "backendCredential": "6kiK4TxnTZl1uJkBuwso5uJI7bhBxb4s.ecfMkD6%2B5U6S9%2FqfJcuTiLtLeku7hLtpOx1CDqM5l1g%3D",
+  "executionArgs": {
+    "projectName": "wave-ai-agent",
+    "projectPath": "c:\\Users\\Emmanuel\\Desktop\\wave-ai-agent",
+    "testIds": [],
+    "additionalInstruction": "Test all API endpoints excluding /api/auth routes. Focus on authentication validation, request/response validation, error handling, and business logic verification. Ensure comprehensive coverage of Note API, Chat API, Subscription API, and Base API endpoints.",
+    "envs": {
+      "API_KEY": "sk-user--Ou32b-YEcboOoOblUKoqEJwY0dQbdVq_MO0RlUowCgjGKMNO4p9GjhetDItjcfF6TRzXGZYXJCpNWpCKxpXiqJ3RuQbwqqjVv-uXFIw_lEGeKWD97x9sfUwTnU2JRhhcG0"
+    }
+  },
+  "proxy": "http://67840085-aed3-451a-9aaa-74405986f7c9:TV4wcbVdIFmGUuv3q5avO9MQdO4M1U6G@tun.testsprite.com:8080"
+}
