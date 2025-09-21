@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-//import { Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import Providers from "@/context/providers";
 
-// const geist = Geist({
-//   subsets: ["latin"],
-//   variable: "--font-sans",
-// });
+const geist = Geist({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Wave AI Agent",
@@ -20,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
+      <body
+        className={`${geist.variable} ${geist.className} font-sans antialiased`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

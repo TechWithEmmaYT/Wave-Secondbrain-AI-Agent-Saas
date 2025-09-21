@@ -21,6 +21,29 @@ declare type AccelerateEngineConfig = {
     accelerateUtils?: AccelerateUtils;
 };
 
+/**
+ * A stripped down interface of `fetch` that `@prisma/extension-accelerate`
+ * relies on. It must be in sync with the corresponding definition in the
+ * Accelerate extension.
+ *
+ * This is the actual interface exposed by the extension. We can't use the
+ * custom fetch function provided by it as normal fetch because the API is
+ * different. Notably, `headers` must be an object and not a `Headers`
+ * instance, and `url` must be a `string` and not a `URL`.
+ *
+ * The return type is `Response` but we can't specify this in an exported type
+ * because it would end up referencing external types from `@types/node` or DOM
+ * which can fail typechecking depending on TypeScript configuration in a user's
+ * project.
+ */
+declare type AccelerateExtensionFetch = (url: string, options: {
+    body?: string;
+    method?: string;
+    headers: Record<string, string>;
+}) => Promise<unknown>;
+
+declare type AccelerateExtensionFetchDecorator = (fetch: AccelerateExtensionFetch) => AccelerateExtensionFetch;
+
 declare type AccelerateUtils = EngineConfig['accelerateUtils'];
 
 export declare type Action = keyof typeof DMMF_2.ModelAction | 'executeRaw' | 'queryRaw' | 'runCommandRaw';
@@ -68,12 +91,15 @@ export declare type Args<T, F extends Operation> = T extends {
 
 export declare type Args_3<T, F extends Operation> = Args<T, F>;
 
-/**
- * Original `quaint::ValueType` enum tag from Prisma's `quaint`.
- * Query arguments marked with this type are sanitized before being sent to the database.
- * Notice while a query argument may be `null`, `ArgType` is guaranteed to be defined.
- */
-declare type ArgType = 'Int32' | 'Int64' | 'Float' | 'Double' | 'Text' | 'Enum' | 'EnumArray' | 'Bytes' | 'Boolean' | 'Char' | 'Array' | 'Numeric' | 'Json' | 'Xml' | 'Uuid' | 'DateTime' | 'Date' | 'Time' | 'Unknown';
+declare type ArgScalarType = 'string' | 'int' | 'bigint' | 'float' | 'decimal' | 'boolean' | 'enum' | 'uuid' | 'json' | 'datetime' | 'bytes' | 'unknown';
+
+declare type ArgType = {
+    scalarType: ArgScalarType;
+    dbType?: string;
+    arity: Arity;
+};
+
+declare type Arity = 'scalar' | 'list';
 
 /**
  * Attributes is a map from string to attribute values.
@@ -104,7 +130,7 @@ declare type BatchArgs = {
 
 declare type BatchInternalParams = {
     requests: RequestParams[];
-    customDataProxyFetch?: CustomDataProxyFetch;
+    customDataProxyFetch?: AccelerateExtensionFetchDecorator;
 };
 
 declare type BatchQuery = {
@@ -309,37 +335,6 @@ export declare type Count<O> = {
 } & {};
 
 export declare function createParam(name: string): Param<unknown, string>;
-
-/**
- * Custom fetch function for `DataProxyEngine`.
- *
- * We can't use the actual type of `globalThis.fetch` because this will result
- * in API Extractor referencing Node.js type definitions in the `.d.ts` bundle
- * for the client runtime. We can only use such types in internal types that
- * don't end up exported anywhere.
-
- * It's also not possible to write a definition of `fetch` that would accept the
- * actual `fetch` function from different environments such as Node.js and
- * Cloudflare Workers (with their extensions to `RequestInit` and `Response`).
- * `fetch` is used in both covariant and contravariant positions in
- * `CustomDataProxyFetch`, making it invariant, so we need the exact same type.
- * Even if we removed the argument and left `fetch` in covariant position only,
- * then for an extension-supplied function to be assignable to `customDataProxyFetch`,
- * the platform-specific (or custom) `fetch` function needs to be assignable
- * to our `fetch` definition. This, in turn, requires the third-party `Response`
- * to be a subtype of our `Response` (which is not a problem, we could declare
- * a minimal `Response` type that only includes what we use) *and* requires the
- * third-party `RequestInit` to be a supertype of our `RequestInit` (i.e. we
- * have to declare all properties any `RequestInit` implementation in existence
- * could possibly have), which is not possible.
- *
- * Since `@prisma/extension-accelerate` redefines the type of
- * `__internalParams.customDataProxyFetch` to its own type anyway (probably for
- * exactly this reason), our definition is never actually used and is completely
- * ignored, so it doesn't matter, and we can just use `unknown` as the type of
- * `fetch` here.
- */
-declare type CustomDataProxyFetch = (fetch: unknown) => unknown;
 
 declare class DataLoader<T = unknown> {
     private options;
@@ -856,6 +851,11 @@ declare interface DriverAdapterFactory<Query, Result> extends AdapterInfo {
      */
     connect(): Promise<Queryable<Query, Result>>;
 }
+
+declare type DynamicArgType = ArgType | {
+    arity: 'tuple';
+    elements: ArgType[];
+};
 
 /** Client */
 export declare type DynamicClientExtensionArgs<C_, TypeMap extends TypeMapDef, TypeMapCb extends TypeMapCbDef, ExtArgs extends Record<string, any>> = {
@@ -1407,6 +1407,20 @@ declare type FieldRefType = ReadonlyDeep_2<{
     fields: SchemaArg[];
 }>;
 
+declare type FieldScalarType = {
+    type: 'string' | 'int' | 'bigint' | 'float' | 'boolean' | 'json' | 'object' | 'datetime' | 'decimal' | 'unsupported';
+} | {
+    type: 'enum';
+    name: string;
+} | {
+    type: 'bytes';
+    encoding: 'array' | 'base64' | 'hex';
+};
+
+declare type FieldType = {
+    arity: Arity;
+} & FieldScalarType;
+
 declare type FluentOperation = 'findUnique' | 'findUniqueOrThrow' | 'findFirst' | 'findFirstOrThrow' | 'create' | 'update' | 'upsert' | 'delete';
 
 export declare interface Fn<Params = unknown, Returns = unknown> {
@@ -1943,7 +1957,7 @@ declare type InternalRequestParams = {
     /** Used to convert args for middleware and back */
     middlewareArgsMapper?: MiddlewareArgsMapper<unknown, unknown>;
     /** Used for Accelerate client extension via Data Proxy */
-    customDataProxyFetch?: CustomDataProxyFetch;
+    customDataProxyFetch?: AccelerateExtensionFetchDecorator;
 } & Omit<QueryMiddlewareParams, 'runInTransaction'>;
 
 declare type IsolationLevel = 'READ UNCOMMITTED' | 'READ COMMITTED' | 'REPEATABLE READ' | 'SNAPSHOT' | 'SERIALIZABLE';
@@ -2764,17 +2778,7 @@ declare type PrismaPromiseInteractiveTransaction<PayloadType = unknown> = {
 
 declare type PrismaPromiseTransaction<PayloadType = unknown> = PrismaPromiseBatchTransaction | PrismaPromiseInteractiveTransaction<PayloadType>;
 
-declare type PrismaValue = string | boolean | number | PrismaValue[] | null | Record<string, unknown> | PrismaValuePlaceholder | PrismaValueGenerator | PrismaValueBytes | PrismaValueBigInt;
-
-declare type PrismaValueBigInt = {
-    prisma__type: 'bigint';
-    prisma__value: string;
-};
-
-declare type PrismaValueBytes = {
-    prisma__type: 'bytes';
-    prisma__value: string;
-};
+declare type PrismaValue = string | boolean | number | PrismaValue[] | null | Record<string, unknown> | PrismaValuePlaceholder | PrismaValueGenerator;
 
 declare type PrismaValueGenerator = {
     prisma__type: 'generatorCall';
@@ -2790,38 +2794,6 @@ declare type PrismaValuePlaceholder = {
         name: string;
         type: string;
     };
-};
-
-declare type PrismaValueType = {
-    type: 'Any';
-} | {
-    type: 'String';
-} | {
-    type: 'Int';
-} | {
-    type: 'BigInt';
-} | {
-    type: 'Float';
-} | {
-    type: 'Boolean';
-} | {
-    type: 'Decimal';
-} | {
-    type: 'Date';
-} | {
-    type: 'Time';
-} | {
-    type: 'Array';
-    inner: PrismaValueType;
-} | {
-    type: 'Json';
-} | {
-    type: 'Object';
-} | {
-    type: 'Bytes';
-} | {
-    type: 'Enum';
-    inner: string;
 };
 
 export declare const PrivateResultType: unique symbol;
@@ -2993,12 +2965,14 @@ declare type QueryPlanBinding = {
 declare type QueryPlanDbQuery = {
     type: 'rawSql';
     sql: string;
-    params: PrismaValue[];
+    args: PrismaValue[];
+    argTypes: ArgType[];
 } | {
     type: 'templateSql';
     fragments: Fragment[];
     placeholderFormat: PlaceholderFormat;
-    params: PrismaValue[];
+    args: PrismaValue[];
+    argTypes: DynamicArgType[];
     chunkable: boolean;
 };
 
@@ -3159,7 +3133,7 @@ declare type RequestBatchOptions<InteractiveTransactionPayload> = {
     traceparent?: string;
     numTry?: number;
     containsWrite: boolean;
-    customDataProxyFetch?: CustomDataProxyFetch;
+    customDataProxyFetch?: AccelerateExtensionFetchDecorator;
 };
 
 declare interface RequestError {
@@ -3196,7 +3170,7 @@ declare type RequestOptions<InteractiveTransactionPayload> = {
     numTry?: number;
     interactiveTransaction?: InteractiveTransactionOptions<InteractiveTransactionPayload>;
     isWrite: boolean;
-    customDataProxyFetch?: CustomDataProxyFetch;
+    customDataProxyFetch?: AccelerateExtensionFetchDecorator;
 };
 
 declare type RequestParams = {
@@ -3214,7 +3188,7 @@ declare type RequestParams = {
     otelParentCtx?: Context;
     otelChildCtx?: Context;
     globalOmit?: GlobalOmitOptions;
-    customDataProxyFetch?: CustomDataProxyFetch;
+    customDataProxyFetch?: AccelerateExtensionFetchDecorator;
 };
 
 declare type RequiredExtensionArgs = NameArgs & ResultArgs & ModelArgs & ClientArgs & QueryOptions;
@@ -3298,16 +3272,16 @@ export declare type ResultFieldDefinition = {
 };
 
 declare type ResultNode = {
-    type: 'AffectedRows';
+    type: 'affectedRows';
 } | {
-    type: 'Object';
+    type: 'object';
     fields: Record<string, ResultNode>;
     serializedName: string | null;
     skipNulls: boolean;
 } | {
-    type: 'Value';
+    type: 'field';
     dbName: string;
-    resultType: PrismaValueType;
+    fieldType: FieldType;
 };
 
 export declare type Return<T> = T extends (...args: any[]) => infer R ? R : T;
@@ -3329,7 +3303,7 @@ declare type Schema = ReadonlyDeep_2<{
     rootMutationType?: string;
     inputObjectTypes: {
         model?: InputType[];
-        prisma: InputType[];
+        prisma?: InputType[];
     };
     outputObjectTypes: {
         model: OutputType[];

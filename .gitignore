@@ -12,7 +12,8 @@
 
 # testing
 /coverage
-/testsprite_tests
+
+*.py
 
 # next.js
 /.next/
@@ -42,3 +43,7 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+.vercel
+
+.vercel

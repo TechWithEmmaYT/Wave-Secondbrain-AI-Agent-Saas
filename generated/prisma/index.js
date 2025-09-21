@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.15.0
- * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
+ * Prisma Client JS version: 6.16.2
+ * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.15.0",
-  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
+  client: "6.16.2",
+  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -250,12 +250,13 @@ const config = {
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
-  "clientVersion": "6.15.0",
-  "engineVersion": "85179d7826409ee107a6ba334b5e305ae3fba9fb",
+  "clientVersion": "6.16.2",
+  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -266,7 +267,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id               String         @id\n  name             String\n  email            String\n  emailVerified    Boolean        @default(false)\n  stripeCustomerId String? // Optional\n  image            String?\n  createdAt        DateTime       @default(now())\n  updatedAt        DateTime       @default(now()) @updatedAt\n  sessions         Session[]\n  accounts         Account[]\n  notes            Note[]\n  Chat             Chat[]\n  subscriptions    Subscription[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@map(\"account\")\n}\n\nmodel Note {\n  id        String   @id @default(uuid())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@map(\"notes\")\n}\n\nmodel Chat {\n  id        String   @id @default(uuid())\n  title     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  messages Message[]\n\n  @@map(\"chats\")\n}\n\nenum Role {\n  user\n  assistant\n  system\n}\n\nmodel Message {\n  id        String   @id @default(uuid())\n  role      Role\n  parts     Json\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  chatId String\n  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)\n\n  @@index([chatId])\n  @@map(\"messages\")\n}\n\nenum Plan {\n  free\n  plus\n  premium\n}\n\nmodel Subscription {\n  id                   String    @id @default(uuid())\n  plan                 Plan      @default(free)\n  referenceId          String // Usually corresponds to User.id (or org ID)\n  stripeCustomerId     String? // Optional\n  stripeSubscriptionId String? // Optional\n  status               String\n  periodStart          DateTime?\n  periodEnd            DateTime?\n  cancelAtPeriodEnd    Boolean?  @default(false)\n  seats                Int?\n  trialStart           DateTime?\n  trialEnd             DateTime?\n\n  user User @relation(fields: [referenceId], references: [id], onDelete: Cascade)\n\n  @@map(\"subscriptions\")\n}\n",
   "inlineSchemaHash": "11411b921d29e3f86c30a3a340e171782dfcc4645597b841b2cd9283498ec240",
-  "copyEngine": true
+  "copyEngine": false
 }
 
 const fs = require('fs')
@@ -303,9 +304,3 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
-// file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "generated/prisma/query_engine-windows.dll.node")
-// file annotations for bundling tools to include these files
-path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "generated/prisma/schema.prisma")
