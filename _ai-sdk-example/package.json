@@ -1,0 +1,22 @@
+{
+  "name": "ai-sdk-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@ai-sdk/google": "^2.0.14",
+    "ai": "^5.0.44",
+    "dotenv": "^17.2.2",
+    "zod": "^4.1.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
