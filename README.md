@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌊 Wave AI – Fullstack Second-Brain AI Agent SaaS Platform
 
-## Getting Started
+> This code, whether in parts or whole, is licensed for commercial use **only with a license**. It is **free for personal use**.
+> 👉 [DM to obtain license](https://x.com/techwithemma) and 👉 [here to learn more](https://github.com/TechWithEmmaYT/Wave-Secondbrain-AI-Agent-Saas/blob/main/TECHWITHEMMA-LICENSE.md)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ❤️ Support the Channel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Love this project? Here’s how you can support:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- ☕ [Buy Me a Coffee](https://dub.sh/buy-me-coffee)
+- 🧪 [Try TestSprite for free](https://dub.sh/try-testsprite)
+- 🎥 [Subscribe on YouTube](https://dub.sh/subcribe-to-channel)
+- 🌟 Star this repo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### 📺Watch the Complete Full Course on YouTube
 
-To learn more about Next.js, take a look at the following resources:
+> Learn how it all works step-by-step, including tool chaining, URL extraction, web search, auth, billing, and deployment.
+> 👉 [Watch the Course](https://www.youtube.com/watch?v=o3IqOrXtxm8)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🗝️ Key Features 👇
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🔐 Authentication with **BetterAuth**
+- ⚡ AI-powered second-brain agent
+- 🔍 Extract + summarize content from URLs
+- 🌍 Built-in web search tool
+- 📝 Create & Find tools
+- 🛠️ Tool Chaining
+- 🧠 Integrations with Claude, Grok & others
+- 🧪 Testing with **TestSprite** (AI testing agent)
+- 💳 Stripe subscription billing
+- 📱 Mobile responsive UI
+- 🌐 Next.js 15 + React 19
+- 🎨 Styled with Tailwind v4 & Shadcn/ui
+- 🚀 Deploy to Vercel
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📈 For More Projects
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+💸 **MERN AI Finance SaaS – Full Build (Stripe, Setup & Deployment, Analytics, CSV, Charts, Gemini AI)**
+Stripe Billing · Analytics · CSV Uploads · Charts · Gemini AI
+👉 [Get Extended Version](https://techwithemma.gumroad.com/l/gasvc)
+
+- Free Trial + Monthly & Yearly Plan
+- Switch between Monthly ↔️ Yearly Plan
+- Full Stripe Integration & Webhooks
+- Setup Video (Run locally)
+- Complete Full Source Code
+- Plus Support
+
+---
+
+## 📜 License Information
+
+A paid license is required for commercial use.
+👉[DM to obtain Commercial License](https://x.com/techwithemma)
+
+For more details about license, please refer to the [TECHWITHEMMA-LICENSE.md](https://github.com/TechWithEmmaYT/Wave-Secondbrain-AI-Agent-Saas/blob/main/TECHWITHEMMA-LICENSE.md).
+
+---
+
+# 📺 Subscribe for More Projects
+
+If you find this helpful, support by subscribing and sharing:
+
+🔗 [https://dub.sh/subcribe-to-channel](https://dub.sh/subcribe-to-channel)
+
+---
+
+⚡ **Sponsor Shoutout**: Big thanks to [TestSprite](https://dub.sh/try-testsprite) for sponsoring this build 🙌
